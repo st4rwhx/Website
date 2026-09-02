@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  passwordHash         String
+  name                 String?
+  createdAt            DateTime  @default(now())
+
+  // Subscription / Stripe
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  subscriptionStatus   String    @default("trialing") // trialing | active | past_due | canceled | incomplete
+  trialEndsAt          DateTime?
+  currentPeriodEnd     DateTime?
+
+  children Child[]
+  stories  Story[]
+}
+
+model Child {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  age         Int
+  gender      String? // fille | garcon | autre
+  personality String // texte libre: traits de caractere
+  likes       String // centres d'interet, jouets, animaux preferes...
+  dislikes    String? // ce qu'il n'aime pas / peurs a eviter
+  favoriteCharacters String? // personnages / heros preferes
+  createdAt   DateTime @default(now())
+
+  stories Story[]
+}
+
+model Story {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  childId   String
+  child     Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+  theme     String
+  moral     String?
+  length    String   @default("moyenne") // courte | moyenne | longue
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+}

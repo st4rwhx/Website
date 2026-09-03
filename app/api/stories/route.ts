@@ -74,6 +74,7 @@ export async function POST(req: Request) {
         likes: child.likes,
         dislikes: child.dislikes,
         favoriteCharacters: child.favoriteCharacters,
+        safeMode: child.safeMode,
       },
       {
         theme: parsed.data.theme,

@@ -30,6 +30,7 @@ export default async function ModifierEnfantPage({
           likes: child.likes,
           dislikes: child.dislikes ?? "",
           favoriteCharacters: child.favoriteCharacters ?? "",
+          safeMode: child.safeMode,
         }}
       />
     </div>

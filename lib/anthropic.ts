@@ -12,6 +12,8 @@ export type ChildProfile = {
   likes: string;
   dislikes?: string | null;
   favoriteCharacters?: string | null;
+  /** Contrôle parental : histoires apaisées, sans frayeurs ni tension forte. */
+  safeMode: boolean;
 };
 
 export type StoryRequest = {
@@ -27,8 +29,13 @@ const LENGTH_GUIDANCE: Record<StoryRequest["length"], string> = {
 };
 
 export async function generateStory(child: ChildProfile, request: StoryRequest) {
+  const safetyGuidance = child.safeMode
+    ? `Contrôle parental activé pour cet enfant : l'histoire doit être entièrement apaisée. Aucune frayeur, aucun suspense anxiogène, aucun méchant menaçant, aucune situation de danger réel même résolue positivement. Les éventuelles péripéties se résolvent sans tension, avec douceur et humour.`
+    : `Un peu de suspense léger et de péripéties est autorisé (rien de traumatisant), tant que l'histoire reste rassurante et se termine bien.`;
+
   const systemPrompt = `Tu es un auteur d'histoires pour enfants, bienveillant et créatif.
-Tu écris des histoires personnalisées, adaptées à l'âge de l'enfant, jamais effrayantes au point de faire de vrais cauchemars, sans violence explicite, sans contenu inapproprié.
+Tu écris des histoires personnalisées, adaptées à l'âge de l'enfant, sans violence explicite, sans contenu inapproprié.
+${safetyGuidance}
 Le ton est chaleureux, rassurant et plein d'imagination. Le vocabulaire est adapté à l'âge de l'enfant.
 Réponds UNIQUEMENT avec un objet JSON valide de la forme {"title": string, "content": string}, sans texte autour, sans balises markdown.
 Le champ "content" contient l'histoire complète en français, avec des paragraphes séparés par des sauts de ligne doubles.`;

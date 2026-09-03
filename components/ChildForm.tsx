@@ -11,6 +11,7 @@ export type ChildFormValues = {
   likes: string;
   dislikes: string;
   favoriteCharacters: string;
+  safeMode: boolean;
 };
 
 const emptyValues: ChildFormValues = {
@@ -21,6 +22,7 @@ const emptyValues: ChildFormValues = {
   likes: "",
   dislikes: "",
   favoriteCharacters: "",
+  safeMode: true,
 };
 
 export default function ChildForm({
@@ -147,6 +149,23 @@ export default function ChildForm({
           placeholder="La Reine des Neiges, Spiderman, Pat'Patrouille..."
         />
       </div>
+
+      <label className="flex items-start gap-3 rounded-lg border border-black/10 px-3 py-3 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={values.safeMode}
+          onChange={(e) => set("safeMode", e.target.checked)}
+          className="mt-0.5"
+        />
+        <span className="text-sm">
+          <span className="font-medium">Histoires apaisées (recommandé)</span>
+          <br />
+          <span className="opacity-60">
+            Aucune frayeur, aucun méchant menaçant ni situation de danger : les histoires restent douces du
+            début à la fin. Désactivez pour autoriser un peu de suspense léger.
+          </span>
+        </span>
+      </label>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 

@@ -35,6 +35,7 @@ model Child {
   likes       String // centres d'interet, jouets, animaux preferes...
   dislikes    String? // ce qu'il n'aime pas / peurs a eviter
   favoriteCharacters String? // personnages / heros preferes
+  safeMode    Boolean  @default(true) // contrôle parental : histoires apaisées, sans frayeurs ni tension forte
   createdAt   DateTime @default(now())
 
   stories Story[]

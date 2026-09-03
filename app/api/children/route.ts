@@ -12,6 +12,7 @@ const childSchema = z.object({
   likes: z.string().min(1).max(1000),
   dislikes: z.string().max(1000).optional(),
   favoriteCharacters: z.string().max(500).optional(),
+  safeMode: z.boolean().default(true),
 });
 
 export async function GET() {

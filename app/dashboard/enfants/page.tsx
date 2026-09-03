@@ -42,6 +42,11 @@ export default async function EnfantsPage() {
                 </div>
               </div>
               <p className="text-sm opacity-70 mt-3 line-clamp-3">{c.personality}</p>
+              {c.safeMode && (
+                <span className="inline-block mt-2 text-xs rounded-full bg-[var(--accent)]/10 px-2.5 py-1">
+                  🕊️ Histoires apaisées
+                </span>
+              )}
               <Link
                 href={`/dashboard/histoires/nouvelle?enfant=${c.id}`}
                 className="inline-block mt-4 text-sm font-medium text-[var(--primary)]"

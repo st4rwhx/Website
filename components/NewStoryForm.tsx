@@ -3,19 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { UNIVERSES } from "@/lib/universes";
 
 type Child = { id: string; name: string };
-
-const THEME_SUGGESTIONS = [
-  "L'heure du coucher",
-  "Le partage avec les autres",
-  "La rentrée des classes",
-  "Un anniversaire surprise",
-  "Un voyage magique",
-  "Apprivoiser la peur du noir",
-  "Une nouvelle petite sœur ou un petit frère",
-  "L'amitié",
-];
 
 export default function NewStoryForm({
   kids,
@@ -31,6 +21,7 @@ export default function NewStoryForm({
   const router = useRouter();
   const [childId, setChildId] = useState(defaultChildId ?? kids[0]?.id ?? "");
   const [theme, setTheme] = useState("");
+  const [selectedUniverse, setSelectedUniverse] = useState<string | null>(null);
   const [moral, setMoral] = useState("");
   const [length, setLength] = useState<"courte" | "moyenne" | "longue">("moyenne");
   const [loading, setLoading] = useState(false);
@@ -91,32 +82,41 @@ export default function NewStoryForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Thème de l&apos;histoire *</label>
-        <input
-          required
-          value={theme}
-          onChange={(e) => setTheme(e.target.value)}
-          className="w-full rounded-lg border border-black/15 px-3 py-2"
-          placeholder="Ex : la peur du noir, un anniversaire, un dragon gentil..."
-          list="theme-suggestions"
-        />
-        <datalist id="theme-suggestions">
-          {THEME_SUGGESTIONS.map((t) => (
-            <option key={t} value={t} />
-          ))}
-        </datalist>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {THEME_SUGGESTIONS.slice(0, 4).map((t) => (
+        <label className="block text-sm font-medium mb-2">Choisissez un univers *</label>
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+          {UNIVERSES.map((u) => (
             <button
               type="button"
-              key={t}
-              onClick={() => setTheme(t)}
-              className="text-xs rounded-full border border-black/15 px-3 py-1 hover:bg-black/5"
+              key={u.id}
+              onClick={() => {
+                setSelectedUniverse(u.id);
+                setTheme(u.theme);
+              }}
+              className={`flex flex-col items-center gap-1 rounded-xl border px-2 py-3 text-center transition ${
+                selectedUniverse === u.id
+                  ? "bg-[var(--primary)] text-white border-[var(--primary)]"
+                  : "border-black/10 hover:bg-black/5"
+              }`}
             >
-              {t}
+              <span className="text-xl">{u.emoji}</span>
+              <span className="text-xs font-medium leading-tight">{u.label}</span>
             </button>
           ))}
         </div>
+
+        <p className="text-sm font-medium mt-4 mb-1">
+          Ou décrivez votre propre idée {selectedUniverse ? "(remplace l'univers choisi)" : ""}
+        </p>
+        <input
+          required
+          value={theme}
+          onChange={(e) => {
+            setTheme(e.target.value);
+            setSelectedUniverse(null);
+          }}
+          className="w-full rounded-lg border border-black/15 px-3 py-2"
+          placeholder="Ex : un dragon gentil qui a peur de voler..."
+        />
       </div>
 
       <div>

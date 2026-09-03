@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { hasAccess, trialDaysLeft } from "@/lib/subscription";
+import { canGenerateStory, isPremium } from "@/lib/subscription";
 import Navbar from "@/components/Navbar";
 import type { ReactNode } from "react";
 
@@ -16,38 +16,38 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!user) redirect("/connexion");
 
-  const access = hasAccess(user);
-  const daysLeft = user.subscriptionStatus === "trialing" ? trialDaysLeft(user.trialEndsAt) : null;
+  const premium = isPremium(user);
+  const access = await canGenerateStory(user);
 
   return (
     <div className="flex-1 flex flex-col">
       <Navbar />
 
-      {user.subscriptionStatus === "trialing" && (
-        <div className="bg-[var(--accent)]/10 text-center text-sm py-2 px-4">
-          {access ? (
+      {!premium && (
+        <div className={`text-center text-sm py-2 px-4 ${access.allowed ? "bg-[var(--accent)]/10" : "bg-red-50 text-red-700"}`}>
+          {access.allowed ? (
             <>
-              🎁 Il vous reste <strong>{daysLeft} jour{daysLeft === 1 ? "" : "s"}</strong> d&apos;essai gratuit.{" "}
+              🎁 Palier gratuit : <strong>{access.remainingFree} histoire{access.remainingFree === 1 ? "" : "s"}</strong> disponible aujourd&apos;hui.{" "}
               <Link href="/dashboard/abonnement" className="underline font-medium">
-                Passer au Pro
+                Passer au Pro pour un accès illimité + audio
               </Link>
             </>
           ) : (
             <>
-              Votre essai gratuit est terminé.{" "}
+              Vous avez utilisé votre histoire gratuite du jour, revenez demain.{" "}
               <Link href="/dashboard/abonnement" className="underline font-medium">
-                Activer l&apos;abonnement Pro
+                Ou activez l&apos;abonnement Pro
               </Link>{" "}
-              pour continuer à créer des histoires.
+              pour des histoires illimitées dès maintenant.
             </>
           )}
         </div>
       )}
-      {!access && user.subscriptionStatus !== "trialing" && (
+      {premium && user.subscriptionStatus === "past_due" && (
         <div className="bg-red-50 text-red-700 text-center text-sm py-2 px-4">
-          Votre abonnement n&apos;est plus actif.{" "}
+          Un problème est survenu avec votre dernier paiement.{" "}
           <Link href="/dashboard/abonnement" className="underline font-medium">
-            Réactiver l&apos;abonnement
+            Mettre à jour mon moyen de paiement
           </Link>
         </div>
       )}

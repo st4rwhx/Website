@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Câlin d'Histoires — Histoires personnalisées pour votre enfant",
   description:
-    "Une IA crée chaque soir une histoire unique, adaptée à la personnalité et aux goûts de votre enfant. Essai gratuit, puis abonnement mensuel.",
+    "Une IA crée chaque soir une histoire unique, adaptée à la personnalité et aux goûts de votre enfant. Une histoire gratuite par jour, ou abonnement Pro illimité avec narration audio.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

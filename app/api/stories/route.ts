@@ -3,8 +3,10 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { hasAccess } from "@/lib/subscription";
+import { canGenerateStory, isPremium } from "@/lib/subscription";
 import { generateStory } from "@/lib/anthropic";
+import { generateNarration } from "@/lib/tts";
+import { saveStoryAudio } from "@/lib/storage";
 
 const storySchema = z.object({
   childId: z.string().min(1),
@@ -39,9 +41,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
   }
 
-  if (!hasAccess(user)) {
+  const access = await canGenerateStory(user);
+  if (!access.allowed) {
     return NextResponse.json(
-      { error: "Votre essai gratuit est terminé. Activez l'abonnement Pro pour continuer." },
+      {
+        error:
+          "Vous avez utilisé votre histoire gratuite du jour. Revenez demain, ou passez à l'abonnement Pro pour des histoires illimitées.",
+      },
       { status: 402 },
     );
   }
@@ -94,6 +100,20 @@ export async function POST(req: Request) {
       content: generated.content,
     },
   });
+
+  // Narration audio : fonctionnalité Pro, générée en best-effort (ne bloque jamais la création de l'histoire).
+  if (isPremium(user)) {
+    try {
+      const audio = await generateNarration(generated.content);
+      if (audio) {
+        const audioPath = await saveStoryAudio(story.id, audio);
+        await prisma.story.update({ where: { id: story.id }, data: { audioPath } });
+        story.audioPath = audioPath;
+      }
+    } catch (err) {
+      console.error("Erreur lors de la génération de la narration audio :", err);
+    }
+  }
 
   return NextResponse.json({ story });
 }

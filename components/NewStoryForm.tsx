@@ -21,10 +21,12 @@ export default function NewStoryForm({
   kids,
   defaultChildId,
   canGenerate,
+  premium,
 }: {
   kids: Child[];
   defaultChildId?: string;
   canGenerate: boolean;
+  premium: boolean;
 }) {
   const router = useRouter();
   const [childId, setChildId] = useState(defaultChildId ?? kids[0]?.id ?? "");
@@ -147,13 +149,27 @@ export default function NewStoryForm({
         </div>
       </div>
 
+      {premium ? (
+        <p className="text-sm rounded-lg bg-[var(--accent)]/10 px-3 py-2">
+          🔊 La narration audio sera générée automatiquement avec votre histoire (abonnement Pro).
+        </p>
+      ) : (
+        <p className="text-sm opacity-60">
+          🔊 Narration audio réservée à l&apos;abonnement{" "}
+          <Link href="/dashboard/abonnement" className="text-[var(--primary)] underline font-medium">
+            Pro
+          </Link>
+          .
+        </p>
+      )}
+
       {!canGenerate && (
         <p className="text-sm rounded-lg bg-red-50 text-red-700 px-3 py-2">
-          Votre accès est terminé.{" "}
+          Vous avez utilisé votre histoire gratuite du jour.{" "}
           <Link href="/dashboard/abonnement" className="underline font-medium">
             Activez l&apos;abonnement Pro
           </Link>{" "}
-          pour générer de nouvelles histoires.
+          pour générer des histoires illimitées, dès maintenant.
         </p>
       )}
 

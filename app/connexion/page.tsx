@@ -77,7 +77,7 @@ export default function ConnexionPage() {
         <p className="text-sm opacity-60 mt-6 text-center">
           Pas encore de compte ?{" "}
           <Link href="/inscription" className="text-[var(--primary)] font-medium">
-            Essai gratuit
+            Commencer gratuitement
           </Link>
         </p>
       </div>

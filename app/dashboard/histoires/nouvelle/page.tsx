@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { hasAccess } from "@/lib/subscription";
+import { canGenerateStory, isPremium } from "@/lib/subscription";
 import NewStoryForm from "@/components/NewStoryForm";
 
 export default async function NouvelleHistoirePage({
@@ -20,6 +20,9 @@ export default async function NouvelleHistoirePage({
     prisma.user.findUnique({ where: { id: session!.user.id } }),
   ]);
 
+  const access = user ? await canGenerateStory(user) : { allowed: false, remainingFree: 0 };
+  const premium = user ? isPremium(user) : false;
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-1">Nouvelle histoire</h1>
@@ -27,7 +30,8 @@ export default async function NouvelleHistoirePage({
       <NewStoryForm
         kids={children}
         defaultChildId={enfant}
-        canGenerate={user ? hasAccess(user) : false}
+        canGenerate={access.allowed}
+        premium={premium}
       />
     </div>
   );

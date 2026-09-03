@@ -58,7 +58,7 @@ export default function Home() {
               href="/inscription"
               className="rounded-full bg-[var(--primary)] text-white px-6 py-3 font-semibold hover:bg-[var(--primary-dark)] transition"
             >
-              Commencer l&apos;essai gratuit
+              Commencer gratuitement
             </Link>
             <Link
               href="#comment-ca-marche"
@@ -127,22 +127,22 @@ export default function Home() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center">
           <h2 className="text-3xl font-bold mb-3">Un tarif simple</h2>
           <p className="opacity-70 mb-10">
-            Essayez gratuitement, sans carte bancaire à saisir immédiatement. Continuez ensuite avec l&apos;abonnement Pro.
+            Une histoire gratuite chaque jour, sans limite de durée ni carte bancaire. Passez au Pro quand vous voulez plus.
           </p>
           <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <div className="rounded-2xl border border-black/10 p-8 text-left">
-              <h3 className="font-semibold text-lg mb-1">Essai gratuit</h3>
+              <h3 className="font-semibold text-lg mb-1">Gratuit</h3>
               <p className="text-3xl font-extrabold mb-4">0€</p>
               <ul className="text-sm opacity-75 space-y-2 mb-6">
-                <li>✔️ 7 jours d&apos;essai</li>
-                <li>✔️ Histoires illimitées pendant l&apos;essai</li>
-                <li>✔️ Jusqu&apos;à 3 profils enfants</li>
+                <li>✔️ 1 histoire par jour, sans limite de durée</li>
+                <li>✔️ Profils enfants illimités</li>
+                <li>✔️ Historique conservé</li>
               </ul>
               <Link
                 href="/inscription"
                 className="block text-center rounded-full border border-black/15 px-5 py-2.5 font-semibold hover:bg-black/5"
               >
-                Démarrer l&apos;essai
+                Commencer gratuitement
               </Link>
             </div>
             <div className="rounded-2xl border-2 border-[var(--primary)] p-8 text-left relative">
@@ -150,10 +150,11 @@ export default function Home() {
                 Populaire
               </span>
               <h3 className="font-semibold text-lg mb-1">Pro</h3>
-              <p className="text-3xl font-extrabold mb-1">9,99€ / mois</p>
-              <p className="text-xs opacity-50 mb-4">après l&apos;essai gratuit, sans engagement</p>
+              <p className="text-3xl font-extrabold mb-1">6,99€ / mois</p>
+              <p className="text-xs opacity-50 mb-4">sans engagement, annulable en un clic</p>
               <ul className="text-sm opacity-75 space-y-2 mb-6">
                 <li>✔️ Histoires illimitées</li>
+                <li>✔️ 🔊 Narration audio incluse</li>
                 <li>✔️ Profils enfants illimités</li>
                 <li>✔️ Historique de toutes les histoires</li>
                 <li>✔️ Annulation en un clic</li>

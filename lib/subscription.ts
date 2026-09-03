@@ -1,15 +1,14 @@
 import type { User } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { FREE_DAILY_STORIES } from "@/lib/pricing";
 
-export function hasAccess(user: Pick<User, "subscriptionStatus" | "trialEndsAt" | "currentPeriodEnd">) {
+export { FREE_DAILY_STORIES } from "@/lib/pricing";
+
+/** Un abonnement Pro payant et à jour (accès illimité + narration audio). */
+export function isPremium(user: Pick<User, "subscriptionStatus" | "currentPeriodEnd">) {
   const now = new Date();
 
-  if (user.subscriptionStatus === "trialing") {
-    return !user.trialEndsAt || user.trialEndsAt > now;
-  }
-
-  if (user.subscriptionStatus === "active") {
-    return true;
-  }
+  if (user.subscriptionStatus === "active") return true;
 
   if (user.subscriptionStatus === "past_due") {
     // On laisse un peu de marge le temps que le paiement soit régularisé.
@@ -19,8 +18,26 @@ export function hasAccess(user: Pick<User, "subscriptionStatus" | "trialEndsAt" 
   return false;
 }
 
-export function trialDaysLeft(trialEndsAt: Date | null) {
-  if (!trialEndsAt) return 0;
-  const diff = trialEndsAt.getTime() - Date.now();
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+function startOfToday() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+/** Nombre d'histoires déjà générées aujourd'hui par un utilisateur au palier gratuit. */
+export async function storiesGeneratedToday(userId: string) {
+  return prisma.story.count({
+    where: { userId, createdAt: { gte: startOfToday() } },
+  });
+}
+
+/** Détermine si l'utilisateur peut générer une nouvelle histoire maintenant. */
+export async function canGenerateStory(user: Pick<User, "id" | "subscriptionStatus" | "currentPeriodEnd">) {
+  if (isPremium(user)) {
+    return { allowed: true, remainingFree: null as number | null };
+  }
+
+  const usedToday = await storiesGeneratedToday(user.id);
+  const remainingFree = Math.max(0, FREE_DAILY_STORIES - usedToday);
+  return { allowed: remainingFree > 0, remainingFree };
 }

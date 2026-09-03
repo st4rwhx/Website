@@ -41,7 +41,7 @@ export default function Navbar() {
                 href="/inscription"
                 className="rounded-full bg-[var(--primary)] text-white px-4 py-1.5 hover:bg-[var(--primary-dark)] transition"
               >
-                Essai gratuit
+                Commencer gratuitement
               </Link>
             </>
           )}

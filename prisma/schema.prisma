@@ -17,8 +17,7 @@ model User {
   // Subscription / Stripe
   stripeCustomerId     String?   @unique
   stripeSubscriptionId String?   @unique
-  subscriptionStatus   String    @default("trialing") // trialing | active | past_due | canceled | incomplete
-  trialEndsAt          DateTime?
+  subscriptionStatus   String    @default("free") // free | active | past_due | canceled | incomplete
   currentPeriodEnd     DateTime?
 
   children Child[]
@@ -52,5 +51,6 @@ model Story {
   length    String   @default("moyenne") // courte | moyenne | longue
   title     String
   content   String
+  audioPath String? // nom du fichier audio narré dans storage/audio/ (réservé aux abonnés Pro)
   createdAt DateTime @default(now())
 }

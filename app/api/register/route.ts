@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { TRIAL_DAYS } from "@/lib/stripe";
 
 const schema = z.object({
   name: z.string().min(1).max(100),
@@ -32,15 +31,14 @@ export async function POST(req: Request) {
   }
 
   const passwordHash = await bcrypt.hash(parsed.data.password, 12);
-  const trialEndsAt = new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000);
 
   await prisma.user.create({
     data: {
       email,
       name: parsed.data.name,
       passwordHash,
-      subscriptionStatus: "trialing",
-      trialEndsAt,
+      // subscriptionStatus démarre à "free" (valeur par défaut du schéma) :
+      // 1 histoire gratuite par jour, sans limite de durée.
     },
   });
 

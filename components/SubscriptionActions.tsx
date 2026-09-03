@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PRO_MONTHLY_PRICE_EUR } from "@/lib/pricing";
 
 export function SubscribeButton() {
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ export function SubscribeButton() {
       disabled={loading}
       className="rounded-full bg-[var(--primary)] text-white px-6 py-2.5 font-semibold hover:bg-[var(--primary-dark)] disabled:opacity-50"
     >
-      {loading ? "Redirection..." : "Activer l'abonnement Pro — 9,99€/mois"}
+      {loading ? "Redirection..." : `Activer l'abonnement Pro — ${PRO_MONTHLY_PRICE_EUR}€/mois`}
     </button>
   );
 }

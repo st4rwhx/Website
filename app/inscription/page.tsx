@@ -58,7 +58,7 @@ export default function InscriptionPage() {
       <div className="mx-auto max-w-md px-4 sm:px-6 py-16">
         <h1 className="text-2xl font-bold mb-1">Créer votre compte</h1>
         <p className="text-sm opacity-60 mb-8">
-          7 jours d&apos;essai gratuit, aucune carte bancaire requise pour commencer.
+1 histoire gratuite chaque jour, sans limite de durée ni carte bancaire.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -103,7 +103,7 @@ export default function InscriptionPage() {
             disabled={loading}
             className="w-full rounded-full bg-[var(--primary)] text-white px-5 py-2.5 font-semibold hover:bg-[var(--primary-dark)] disabled:opacity-50"
           >
-            {loading ? "Création du compte..." : "Démarrer l'essai gratuit"}
+            {loading ? "Création du compte..." : "Commencer gratuitement"}
           </button>
         </form>
 

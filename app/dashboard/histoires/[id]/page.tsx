@@ -35,7 +35,15 @@ export default async function HistoirePage({
             {new Date(story.createdAt).toLocaleDateString("fr-FR")}
           </p>
         </div>
-        <DeleteStoryButton id={story.id} />
+        <div className="flex items-center gap-3 shrink-0">
+          <a
+            href={`/api/stories/${story.id}/pdf`}
+            className="text-sm text-[var(--primary)] font-medium hover:underline"
+          >
+            📄 Télécharger en PDF
+          </a>
+          <DeleteStoryButton id={story.id} />
+        </div>
       </div>
 
       {story.audioPath ? (

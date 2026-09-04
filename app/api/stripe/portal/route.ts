@@ -17,10 +17,18 @@ export async function POST() {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-  const portalSession = await stripe.billingPortal.sessions.create({
-    customer: user.stripeCustomerId,
-    return_url: `${appUrl}/dashboard/abonnement`,
-  });
+  try {
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: user.stripeCustomerId,
+      return_url: `${appUrl}/dashboard/abonnement`,
+    });
 
-  return NextResponse.json({ url: portalSession.url });
+    return NextResponse.json({ url: portalSession.url });
+  } catch (err) {
+    console.error("Erreur lors de la création de la session Stripe Billing Portal :", err);
+    return NextResponse.json(
+      { error: "Impossible d'ouvrir la gestion de facturation pour le moment. Réessayez dans un instant." },
+      { status: 502 },
+    );
+  }
 }

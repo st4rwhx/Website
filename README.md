@@ -21,6 +21,7 @@ des histoires illimitées et la narration audio.
 - [ElevenLabs](https://elevenlabs.io) pour la narration audio (fonctionnalité Pro, optionnelle)
 - [pdfkit](https://pdfkit.org) pour l'export PDF des histoires
 - [@aws-sdk/client-s3](https://github.com/aws/aws-sdk-js-v3) pour le stockage audio objet (S3/R2, optionnel)
+- [Resend](https://resend.com) (API HTTP simple) pour les e-mails transactionnels, optionnel — log en console sans clé
 
 ## Fonctionnalités
 
@@ -36,8 +37,10 @@ des histoires illimitées et la narration audio.
 - Palier gratuit : 1 histoire par jour ; blocage au-delà avec incitation à passer au Pro
 - Abonnement Stripe mensuel (Checkout), gestion de la facturation via le Billing Portal
 - Webhooks Stripe pour tenir à jour le statut d'abonnement (actif, impayé, annulé...)
-- Rate limiting basique sur l'inscription et la connexion (anti-abus / anti-bruteforce)
+- Rate limiting basique sur l'inscription, la connexion et la réinitialisation de mot de passe (anti-abus / anti-bruteforce)
 - Page 404, écran d'erreur et état de chargement personnalisés
+- **Conformité RGPD de base** : pages CGU/confidentialité, case de consentement horodatée à l'inscription, export des données personnelles en JSON, suppression de compte en un clic (cascade complète, y compris les fichiers audio)
+- **Mot de passe oublié** : réinitialisation par e-mail à usage unique (token à hash SHA-256, expiration 1h, anti-énumération)
 
 ## Démarrage
 
@@ -66,6 +69,8 @@ Voir `.env.example`. En résumé :
 | `ELEVENLABS_VOICE_ID` | Voix à utiliser (par défaut une voix multilingue) |
 | `S3_BUCKET` | Active le stockage objet (S3/R2) pour l'audio si défini ; sinon stockage local (optionnel) |
 | `S3_REGION`, `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | Configuration du stockage objet (voir `.env.example`) |
+| `RESEND_API_KEY` | Clé API Resend pour l'envoi réel des e-mails (optionnel — sans elle, les e-mails sont loggés en console) |
+| `EMAIL_FROM` | Adresse d'expédition des e-mails transactionnels |
 | `STRIPE_SECRET_KEY` | Clé secrète Stripe |
 | `STRIPE_WEBHOOK_SECRET` | Secret de signature du webhook Stripe |
 | `STRIPE_PRICE_ID` | ID du prix récurrent mensuel (abonnement Pro, 6,99€/mois) |
@@ -87,19 +92,25 @@ Voir `.env.example`. En résumé :
 app/
   page.tsx                     Landing page
   inscription/, connexion/     Authentification
+  mot-de-passe-oublie/,
+  reinitialiser-mot-de-passe/  Réinitialisation de mot de passe
+  cgu/, confidentialite/       Pages légales
   not-found.tsx, error.tsx     Pages 404 / erreur personnalisées
   dashboard/                   Espace parent (protégé par middleware)
     loading.tsx                État de chargement
     enfants/                   Gestion des profils enfants (dont contrôle parental)
     histoires/                 Génération et consultation des histoires (univers, audio, PDF)
     abonnement/                Gestion de l'abonnement Stripe
+    compte/                    Export des données / suppression de compte (RGPD)
   api/
-    register/                  Création de compte (rate limité)
+    register/                  Création de compte (rate limité, consentement requis)
     auth/[...nextauth]/        NextAuth (connexion rate limitée)
+    password-reset/            Demande et confirmation de réinitialisation
+    account/                   Export des données, suppression de compte
     children/                  CRUD des profils enfants
     stories/                   Génération et listing des histoires, audio, export PDF
     stripe/                    Checkout, Billing Portal, webhook
-lib/                           Prisma, NextAuth, Stripe, génération IA, audio, stockage, PDF, rate limit
+lib/                           Prisma, NextAuth, Stripe, génération IA, audio, stockage, PDF, email, rate limit
 prisma/schema.prisma           Modèle de données
 storage/audio/                 Fichiers audio générés en local (non versionné, voir Production)
 ```
@@ -109,14 +120,16 @@ storage/audio/                 Fichiers audio générés en local (non versionn�
 ✅ Fait :
 - Auth, abonnement Stripe, génération IA, audio, PDF, contrôle parental — flow complet testé de bout en bout
 - Stockage audio abstrait (bascule automatique vers S3/R2 dès que `S3_BUCKET` est défini)
-- Rate limiting basique sur les endpoints sensibles à l'abus (inscription, connexion)
+- Rate limiting basique sur les endpoints sensibles à l'abus (inscription, connexion, reset mot de passe)
 - Pages d'erreur/404 personnalisées
+- Réinitialisation de mot de passe par e-mail (fonctionne sans provider configuré, en mode log console)
+- Pages CGU/confidentialité, consentement horodaté, export et suppression des données personnelles
 
 ⚠️ À faire avant un vrai lancement public :
-- **Base de données** : passer de SQLite à PostgreSQL (changer `provider` dans `prisma/schema.prisma`)
+- **Relecture juridique** : les pages CGU/confidentialité livrées sont des modèles de base (raison sociale, adresse de contact à compléter) — à faire relire par un professionnel du droit avant mise en ligne, en particulier sur le statut du consentement parental
+- **Base de données** : passer de SQLite à PostgreSQL (changer `provider` dans `prisma/schema.prisma`) — non fait dans cette session faute d'instance Postgres disponible pour tester la migration
 - **Rate limiting** : l'implémentation actuelle est en mémoire (par instance) — passer sur un store partagé (Redis/Upstash) si déploiement multi-instance
-- **Emails** : pas de vérification d'email ni de réinitialisation de mot de passe à ce stade
-- **RGPD / mineurs** : ajouter une politique de confidentialité claire, un export/suppression des données sur demande, et vérifier le statut légal du consentement parental selon les CGU choisies
+- **Emails** : pas de vérification d'adresse e-mail à l'inscription à ce stade (la réinitialisation de mot de passe, elle, est en place)
 - **Monitoring** : pas de suivi d'erreurs (Sentry) ni d'analytics en place
 - **Longueur audio** : l'API ElevenLabs limite la taille de texte par requête ; prévoir un découpage pour les histoires très longues si besoin
 

@@ -8,6 +8,9 @@ const schema = z.object({
   name: z.string().min(1).max(100),
   email: z.string().email(),
   password: z.string().min(8).max(200),
+  acceptedTerms: z.literal(true, {
+    error: "Vous devez accepter les conditions générales et la politique de confidentialité.",
+  }),
 });
 
 export async function POST(req: Request) {
@@ -46,6 +49,7 @@ export async function POST(req: Request) {
       email,
       name: parsed.data.name,
       passwordHash,
+      termsAcceptedAt: new Date(),
       // subscriptionStatus démarre à "free" (valeur par défaut du schéma) :
       // 1 histoire gratuite par jour, sans limite de durée.
     },

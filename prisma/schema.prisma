@@ -20,6 +20,11 @@ model User {
   subscriptionStatus   String    @default("free") // free | active | past_due | canceled | incomplete
   currentPeriodEnd     DateTime?
 
+  // RGPD / sécurité
+  termsAcceptedAt        DateTime? // horodatage d'acceptation des CGU et de la politique de confidentialité
+  passwordResetTokenHash String?   @unique // hash SHA-256 du jeton de réinitialisation de mot de passe (jamais stocké en clair)
+  passwordResetExpires   DateTime?
+
   children Child[]
   stories  Story[]
 }

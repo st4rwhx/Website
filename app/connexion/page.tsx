@@ -53,7 +53,12 @@ export default function ConnexionPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Mot de passe</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">Mot de passe</label>
+              <Link href="/mot-de-passe-oublie" className="text-xs text-[var(--primary)] font-medium">
+                Mot de passe oublié ?
+              </Link>
+            </div>
             <input
               required
               type="password"

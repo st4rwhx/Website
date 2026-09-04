@@ -11,6 +11,7 @@ export default function InscriptionPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -23,7 +24,7 @@ export default function InscriptionPage() {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, acceptedTerms }),
       });
       const data = await res.json();
 
@@ -96,11 +97,32 @@ export default function InscriptionPage() {
             />
           </div>
 
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              required
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              className="mt-0.5"
+            />
+            <span className="opacity-70">
+              J&apos;accepte les{" "}
+              <Link href="/cgu" target="_blank" className="text-[var(--primary)] underline">
+                conditions générales
+              </Link>{" "}
+              et la{" "}
+              <Link href="/confidentialite" target="_blank" className="text-[var(--primary)] underline">
+                politique de confidentialité
+              </Link>
+              . Je certifie être majeur et créer ce compte en tant que parent ou représentant légal.
+            </span>
+          </label>
+
           {error && <p className="text-sm text-red-600">{error}</p>}
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !acceptedTerms}
             className="w-full rounded-full bg-[var(--primary)] text-white px-5 py-2.5 font-semibold hover:bg-[var(--primary-dark)] disabled:opacity-50"
           >
             {loading ? "Création du compte..." : "Commencer gratuitement"}

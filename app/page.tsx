@@ -170,8 +170,17 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="py-8 text-center text-xs opacity-50">
-        © {new Date().getFullYear()} Câlin d&apos;Histoires. Fait avec ❤️ pour les parents débordés.
+      <footer className="py-8 text-center text-xs opacity-50 space-y-2">
+        <p>© {new Date().getFullYear()} Câlin d&apos;Histoires. Fait avec ❤️ pour les parents débordés.</p>
+        <p className="space-x-3">
+          <Link href="/cgu" className="hover:underline">
+            Conditions générales
+          </Link>
+          <span aria-hidden="true">·</span>
+          <Link href="/confidentialite" className="hover:underline">
+            Confidentialité
+          </Link>
+        </p>
       </footer>
     </div>
   );

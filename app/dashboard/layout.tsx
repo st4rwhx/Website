@@ -62,6 +62,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           <SidebarLink href="/dashboard/histoires" label="Mes histoires" />
           <SidebarLink href="/dashboard/histoires/nouvelle" label="Nouvelle histoire" />
           <SidebarLink href="/dashboard/abonnement" label="Abonnement" />
+          <SidebarLink href="/dashboard/compte" label="Mon compte" />
           </div>
         </aside>
         <main className="min-w-0">{children}</main>

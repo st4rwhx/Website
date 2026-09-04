@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { canGenerateStory, isPremium } from "@/lib/subscription";
 import Navbar from "@/components/Navbar";
+import ChildSwitcher from "@/components/ChildSwitcher";
 import type { ReactNode } from "react";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
@@ -53,12 +54,15 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       )}
 
       <div className="mx-auto max-w-6xl w-full px-4 sm:px-6 py-8 flex-1 grid md:grid-cols-[200px_1fr] gap-8">
-        <aside className="space-y-1 text-sm">
+        <aside className="text-sm">
+          <ChildSwitcher userId={user.id} />
+          <div className="space-y-1">
           <SidebarLink href="/dashboard" label="Vue d'ensemble" />
           <SidebarLink href="/dashboard/enfants" label="Mes enfants" />
           <SidebarLink href="/dashboard/histoires" label="Mes histoires" />
           <SidebarLink href="/dashboard/histoires/nouvelle" label="Nouvelle histoire" />
           <SidebarLink href="/dashboard/abonnement" label="Abonnement" />
+          </div>
         </aside>
         <main className="min-w-0">{children}</main>
       </div>

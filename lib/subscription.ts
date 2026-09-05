@@ -31,6 +31,11 @@ export async function storiesGeneratedToday(userId: string) {
   });
 }
 
+/** Calcule le nombre d'histoires gratuites restantes à partir de celles déjà générées aujourd'hui. */
+export function computeRemainingFree(usedToday: number) {
+  return Math.max(0, FREE_DAILY_STORIES - usedToday);
+}
+
 /** Détermine si l'utilisateur peut générer une nouvelle histoire maintenant. */
 export async function canGenerateStory(user: Pick<User, "id" | "subscriptionStatus" | "currentPeriodEnd">) {
   if (isPremium(user)) {
@@ -38,6 +43,6 @@ export async function canGenerateStory(user: Pick<User, "id" | "subscriptionStat
   }
 
   const usedToday = await storiesGeneratedToday(user.id);
-  const remainingFree = Math.max(0, FREE_DAILY_STORIES - usedToday);
+  const remainingFree = computeRemainingFree(usedToday);
   return { allowed: remainingFree > 0, remainingFree };
 }

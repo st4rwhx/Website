@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { randomBytes, createHash } from "crypto";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { generateToken } from "@/lib/tokens";
 
 const schema = z.object({ email: z.string().email() });
 
@@ -31,8 +31,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, message: GENERIC_MESSAGE });
   }
 
-  const rawToken = randomBytes(32).toString("hex");
-  const tokenHash = createHash("sha256").update(rawToken).digest("hex");
+  const { raw: rawToken, hash: tokenHash } = generateToken();
   const expires = new Date(Date.now() + 60 * 60 * 1000); // 1h
 
   await prisma.user.update({

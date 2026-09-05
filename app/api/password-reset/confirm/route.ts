@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { createHash } from "crypto";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { hashToken } from "@/lib/tokens";
 
 const schema = z.object({
   token: z.string().min(1),
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const tokenHash = createHash("sha256").update(parsed.data.token).digest("hex");
+  const tokenHash = hashToken(parsed.data.token);
   const user = await prisma.user.findUnique({ where: { passwordResetTokenHash: tokenHash } });
 
   if (!user || !user.passwordResetExpires || user.passwordResetExpires < new Date()) {

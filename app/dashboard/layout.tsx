@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { canGenerateStory, isPremium } from "@/lib/subscription";
 import Navbar from "@/components/Navbar";
 import ChildSwitcher from "@/components/ChildSwitcher";
+import ResendVerificationButton from "@/components/ResendVerificationButton";
 import type { ReactNode } from "react";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
@@ -23,6 +24,13 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   return (
     <div className="flex-1 flex flex-col">
       <Navbar />
+
+      {!user.emailVerifiedAt && (
+        <div className="bg-amber-50 text-amber-800 text-center text-sm py-2 px-4 flex items-center justify-center gap-2 flex-wrap">
+          <span>📧 Confirmez votre adresse email pour sécuriser votre compte.</span>
+          <ResendVerificationButton />
+        </div>
+      )}
 
       {!premium && (
         <div className={`text-center text-sm py-2 px-4 ${access.allowed ? "bg-[var(--accent)]/10" : "bg-red-50 text-red-700"}`}>

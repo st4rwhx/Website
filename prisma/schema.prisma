@@ -25,6 +25,11 @@ model User {
   passwordResetTokenHash String?   @unique // hash SHA-256 du jeton de réinitialisation de mot de passe (jamais stocké en clair)
   passwordResetExpires   DateTime?
 
+  // Vérification d'email (non bloquante : simple bannière de rappel côté dashboard)
+  emailVerifiedAt              DateTime?
+  emailVerificationTokenHash   String?   @unique
+  emailVerificationExpires     DateTime?
+
   children Child[]
   stories  Story[]
 }

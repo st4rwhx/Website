@@ -29,6 +29,7 @@ export async function GET() {
       creeLe: user.createdAt,
       abonnement: user.subscriptionStatus,
       conditionsAccepteesLe: user.termsAcceptedAt,
+      emailConfirmeLe: user.emailVerifiedAt,
     },
     enfants: user.children.map((c) => ({
       id: c.id,

@@ -41,6 +41,9 @@ des histoires illimitées et la narration audio.
 - Page 404, écran d'erreur et état de chargement personnalisés
 - **Conformité RGPD de base** : pages CGU/confidentialité, case de consentement horodatée à l'inscription, export des données personnelles en JSON, suppression de compte en un clic (cascade complète, y compris les fichiers audio)
 - **Mot de passe oublié** : réinitialisation par e-mail à usage unique (token à hash SHA-256, expiration 1h, anti-énumération)
+- **Vérification d'email** non bloquante à l'inscription, avec bannière de rappel et renvoi (rate limité)
+- **SEO de base** : sitemap.xml, robots.txt, métadonnées Open Graph / Twitter Card
+- **Tests automatisés** (Vitest) sur la logique métier critique (abonnement, rate limiting, jetons) + **CI GitHub Actions** (typecheck, lint, tests, build sur chaque push/PR)
 
 ## Démarrage
 
@@ -86,6 +89,17 @@ Voir `.env.example`. En résumé :
    et copier le secret affiché dans `STRIPE_WEBHOOK_SECRET`.
 3. En production, créer un endpoint webhook pointant vers `https://votre-domaine/api/stripe/webhook` et écouter au minimum les événements `checkout.session.completed`, `customer.subscription.updated` et `customer.subscription.deleted`.
 
+### Tests
+
+```bash
+npm test
+```
+
+Lance la suite Vitest (logique métier : abonnement/quota gratuit, rate limiting, jetons,
+intégrité des univers thématiques). Une CI GitHub Actions (`.github/workflows/ci.yml`)
+exécute automatiquement `tsc`, `eslint`, `npm test` et `npm run build` sur chaque push et
+pull request.
+
 ## Structure du projet
 
 ```
@@ -120,18 +134,20 @@ storage/audio/                 Fichiers audio générés en local (non versionn�
 ✅ Fait :
 - Auth, abonnement Stripe, génération IA, audio, PDF, contrôle parental — flow complet testé de bout en bout
 - Stockage audio abstrait (bascule automatique vers S3/R2 dès que `S3_BUCKET` est défini)
-- Rate limiting basique sur les endpoints sensibles à l'abus (inscription, connexion, reset mot de passe)
+- Rate limiting basique sur les endpoints sensibles à l'abus (inscription, connexion, reset mot de passe, renvoi de vérification)
 - Pages d'erreur/404 personnalisées
-- Réinitialisation de mot de passe par e-mail (fonctionne sans provider configuré, en mode log console)
+- Réinitialisation de mot de passe et vérification d'email (fonctionnent sans provider configuré, en mode log console)
 - Pages CGU/confidentialité, consentement horodaté, export et suppression des données personnelles
+- Sitemap, robots.txt, métadonnées Open Graph/Twitter
+- Suite de tests automatisés + CI GitHub Actions sur chaque push/PR
 
 ⚠️ À faire avant un vrai lancement public :
 - **Relecture juridique** : les pages CGU/confidentialité livrées sont des modèles de base (raison sociale, adresse de contact à compléter) — à faire relire par un professionnel du droit avant mise en ligne, en particulier sur le statut du consentement parental
 - **Base de données** : passer de SQLite à PostgreSQL (changer `provider` dans `prisma/schema.prisma`) — non fait dans cette session faute d'instance Postgres disponible pour tester la migration
 - **Rate limiting** : l'implémentation actuelle est en mémoire (par instance) — passer sur un store partagé (Redis/Upstash) si déploiement multi-instance
-- **Emails** : pas de vérification d'adresse e-mail à l'inscription à ce stade (la réinitialisation de mot de passe, elle, est en place)
 - **Monitoring** : pas de suivi d'erreurs (Sentry) ni d'analytics en place
 - **Longueur audio** : l'API ElevenLabs limite la taille de texte par requête ; prévoir un découpage pour les histoires très longues si besoin
+- **Image Open Graph** : les métadonnées sociales sont en place mais sans image `og:image` dédiée — à ajouter avant un vrai lancement (visuel de partage sur réseaux sociaux)
 
 ## Production
 

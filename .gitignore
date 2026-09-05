@@ -37,6 +37,8 @@ yarn-error.log*
 # database
 /prisma/dev.db
 /prisma/dev.db-journal
+/ci.db
+/ci.db-journal
 
 # fichiers audio générés (narration des histoires)
 /storage/

@@ -14,10 +14,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const title = "Câlin d'Histoires — Histoires personnalisées pour votre enfant";
+const description =
+  "Une IA crée chaque soir une histoire unique, adaptée à la personnalité et aux goûts de votre enfant. Une histoire gratuite par jour, ou abonnement Pro illimité avec narration audio.";
+
 export const metadata: Metadata = {
-  title: "Câlin d'Histoires — Histoires personnalisées pour votre enfant",
-  description:
-    "Une IA crée chaque soir une histoire unique, adaptée à la personnalité et aux goûts de votre enfant. Une histoire gratuite par jour, ou abonnement Pro illimité avec narration audio.",
+  metadataBase: new URL(appUrl),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: appUrl,
+    siteName: "Câlin d'Histoires",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title,
+    description,
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
